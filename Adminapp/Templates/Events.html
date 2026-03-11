@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+{% extends 'Dashboard.html'%}
+{% block content %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div  class="content-body" style="min-height: 788px;padding-left:25px">
+                    <h4 class="card-title">Add Category</h4>
+                    <p class="card-description">  </p>
+                    <form class="forms-sample" method="POST"  action="{% url 'save_event' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                          <label for="exampleTextarea1">Category_Name</label>
+                          <select name="Category_Name"  class="form-control"  value="{{data.Category_Name}}" id="exampleInputEmail3" Required>
+
+                              <option >--select category</option>
+                              {% for i in categories %}
+                              <option >{{i.CategoryName}}</option>
+                              {% endfor %}
+                          </select>
+                          </div>
+
+                        <div class="form-group">
+                          <label >Event Name</label>
+                          <input type="text" name="EventName" class="form-control" value="{{data.EventName}}"   >
+
+                        </div>
+                         <div class="form-group">
+                          <label >Location</label>
+                          <input type="text" name="Location" class="form-control" value="{{data.Location}}">
+
+                        </div>
+
+                      <div class="form-group">
+                        <label >Price</label>
+                        <input type="text" class="form-control" Name="Price"   value="{{data.Price}}">
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleTextarea1">Description</label>
+                        <textarea class="form-control" Name="Description"   id="exampleTextarea1" rows="4">{{data.Description}}</textarea>
+                      </div>
+                      <div class="form-group">
+                        <label>Image</label>
+
+                        <input type="file" name="Image" value="{{data.Image.url}}" class="file-upload">
+
+                      </div>
+
+
+                      <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                      <button class="btn btn-dark">Cancel</button>
+                        <a href="{% url 'View_Event'  %}"> </a>
+                    </form>
+                  </div>
+
+
+
+
+ <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
+    {% if messages %}
+        {% for msg in messages %}
+            {% if msg.tags == "success" %}
+                <script>
+                    swal('{{msg}}','','success')
+                </script>
+            {% elif msg.tags == "warning" %}
+                <script>
+                    swal('{{msg}}','','warning')
+                </script>
+            {% elif msg.tags == "info" %}
+                <script>
+                    swal('{{msg}}','','info')
+                </script>
+            {% elif msg.tags == "error" %}
+                <script>
+                    swal('{{msg}}','','error')
+                </script>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</body>
+</html>
+{% endblock %}
