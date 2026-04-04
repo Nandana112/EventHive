@@ -63,28 +63,15 @@
             <div class="header-content">
                 <nav class="navbar navbar-expand">
                     <div class="collapse navbar-collapse justify-content-between">
-                        <h1 style="color:navyblue">Bookverse</h1>
-                        <div class="header-left">
-                            <div class="search_bar dropdown">
+                        <h1 style="color:navyblue">EventHive </h1>
+                        <a href="{% url 'Home' %}">Go to Eventhive</a>
 
-                                    <span class="search_icon p-3 c-pointer" data-toggle="dropdown">
-                                    <i class="mdi mdi-magnify"></i>
-                                </span>
-                                <div class="dropdown-menu p-0 m-0">
-                                    <form>
-                                        <input class="form-control" type="search" placeholder="Search" aria-label="Search">
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
 
                         <ul class="navbar-nav header-right">
-
-
                             <li class="nav-item dropdown header-profile">
                                 <a class="nav-link" href="#" role="button" data-toggle="dropdown">
                                     {% if request.session.username %}
-                                    <i class="mdi mdi-account">{{ request.session.username }}</i>
+                                    <i class="mdi mdi-account">Welcome {{ request.session.username }}</i>
                                     {% endif %}
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right">
@@ -142,7 +129,7 @@
                         </ul>
                     </li>
 
-                    <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
+                    <!--li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
                                 class="icon icon-chart-bar-33"></i><span class="nav-text">products</span></a>
                         <ul aria-expanded="false">
                             <li><a href="./chart-flot.html">Flot</a></li>
@@ -152,10 +139,16 @@
                             <li><a href="./chart-sparkline.html">Sparkline</a></li>
                             <li><a href="./chart-peity.html">Peity</a></li>
                         </ul>
+                    </li-->
+                    <li><a href="{% url 'Bookings_details' %}" aria-expanded="false"><i class="icon icon-globe-2"></i>
+                        <span class="nav-text">Booking Details</span></a>
                     </li>
 
                     <li><a href="{% url 'Contact_details' %}" aria-expanded="false"><i class="icon icon-globe-2"></i>
                         <span class="nav-text">Contact Details</span></a>
+                    </li>
+                     <li><a href="{% url 'view_review' %}" aria-expanded="false"><i class="icon icon-globe-2"></i>
+                        <span class="nav-text">Review Details</span></a>
                     </li>
 
                 </ul>

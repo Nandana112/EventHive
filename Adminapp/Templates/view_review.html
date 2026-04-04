@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{% extends 'dashboard.html' %}
+{% extends 'Dashboard.html' %}
 {% block content %}
 <html lang="en">
 <head>
@@ -7,54 +7,50 @@
     <title>Title</title>
 </head>
 <body>
-<div class="content-body" style="min-height: 788px;padding-left:10px">
+<div  class="content-body" style="min-height: 788px;padding-left:10px">
                 <div class="card">
                   <div class="card-body">
-                    <h4 class="card-title">Our Categories</h4>
+                    <h4 class="card-title">View review Details</h4>
 
                     <div class="table-responsive">
                       <table class="table table-striped">
                         <thead>
                           <tr class="text-dark">
-                            <th> CategoryName </th>
-                            <th> Description </th>
-                            <th>Category_Image</th>
+                              <th> Name </th>
+                              <th> event </th>
+                              <th> comment</th>
+                              <th> rating </th>
+                              <th> created_at</th>
                               <th> Options </th>
                           </tr>
                         </thead>
 
                         <tbody>
-                        {% for i in categories %}
-                        <tr class="text-dark">
-                            <td>{{ i.CategoryName }}</td>
-                            <td>{{ i.Description }}</td>
-                            <td>
-                            {% if i.Category_Image %}
+                        {% for i in review %}
 
-                                <img src="{{ i.Category_Image.url }}" alt="profile" width="50">
+                            <tr class="text-dark">
+                                <td>{{ i.Name }}</td>
+                                <td>{{ i.event_type }}</td>
+                                <td>{{ i.comment}}</td>
+                                <td>{{i.rating}}</td>
+                                <td>{{i.created_at}}</td>
 
-                            {% endif %}
-                            </td>
-                            <td>
-                                <a href="{% url 'edit_category'  cat_id=i.id %}" class="btn btn-outline-info btn-sm">Edit</a>
-                                <a href="{% url 'delete_category'  cat_id=i.id %}" class="btn btn-outline-info btn-sm">Delete</a>
-                            </td>
+                                <td>
+                                    <a href="{% url 'delete_review' re_id=i.id %}" class="btn btn-outline-info btn-sm">Delete</a>
+                                </td>
+                            </tr>
 
-                        </tr>
-                           {% endfor %}
+                        {% endfor %}
                         </tbody>
+
 
                       </table>
 
                     </div>
                   </div>
                 </div>
-              </div>
-
-
-
-
- <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+</div>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 
     {% if messages %}

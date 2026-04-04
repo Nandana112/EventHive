@@ -7,41 +7,59 @@
     <title>Title</title>
 </head>
 <body>
-<div class="content-body" style="min-height: 788px;padding-left:10px">
+<div class="content-body" style="min-height: 788px;padding-left:10px ,color:black">
                 <div class="card">
                   <div class="card-body">
-                    <h4 class="card-title">Our Categories</h4>
+                    <h4 class="card-title">Bookings Data</h4>
 
                     <div class="table-responsive">
                       <table class="table table-striped">
                         <thead>
-                          <tr>
-                            <th> CategoryName </th>
-                            <th> Description </th>
-                            <th>Category_Image</th>
+                          <tr class="text-dark">
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Category_Name </th>
+                            <th>EventName</th>
+                            <th>Date</th>
+                            <th>Location</th>
+                            <th>Phone</th>
+                            <th>Price</th>
+                            <th>Address</th>
+                            <th>Message</th>
+                            <th>status</th>
+                            <th>Action</th>
                               <th> Options </th>
                           </tr>
                         </thead>
 
                         <tbody>
-                        {% for i in categories %}
-                        <tr>
-                            <td>{{ i.CategoryName }}</td>
-                            <td>{{ i.Description }}</td>
-                            <td>
-                            {% if i.Category_Image %}
+                        {% for i in data %}
+                            <tr class="text-dark">
+                                <td>{{i.Name}}</td>
+                                <td>{{i.Email}}</td>
+                                <td>{{i.Category_Name|default:"No Category"}}</td>
+                                <td>{{i.EventName}}</td>
+                                <td>{{i.Date}}</td>
+                                <td>{{i.Location}}</td>
+                                <td>{{i.Phone}}</td>
+                                <td>{{i.Price}}</td>
+                                <td>{{i.Address}}</td>
+                                <td>{{i.Message|default:"No Message"}}</td>
+                                <td>{{i.status}}</td>
 
-                                <img src="{{ i.Category_Image.url }}" alt="profile" width="50">
 
-                            {% endif %}
-                            </td>
-                            <td>
-                                <a href="{% url 'edit_category'  cat_id=i.id %}" class="btn btn-outline-info btn-sm">Edit</a>
-                                <a href="{% url 'delete_category'  cat_id=i.id %}" class="btn btn-outline-info btn-sm">Delete</a>
-                            </td>
+                                <td>
 
-                        </tr>
-                           {% endfor %}
+                                    <a href="{% url 'approve_booking' i.id %}" class="btn btn-success">Approve</a>
+                                    <a href="{% url 'reject_booking' i.id %}" class="btn btn-danger">Reject</a>
+
+
+                                </td>
+                                <td>
+                                    <a href="{% url 'delete_booking'  book_id=i.id %}" class="btn btn-outline-info btn-sm">Delete</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
                         </tbody>
 
                       </table>
@@ -49,7 +67,7 @@
                     </div>
                   </div>
                 </div>
-              </div>
+</div>
 
 
 

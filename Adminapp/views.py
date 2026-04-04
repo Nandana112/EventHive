@@ -3,9 +3,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login
 from Adminapp.models import *
 from django.contrib import messages
-from Organizerapp.models import *
-
-from Organizerapp.models import ContactDb
+from Organizerapp.models import ContactDb, BookingDb, ReviewDb
+from django.http import JsonResponse
+import json
 
 
 # Create your views here.
@@ -13,7 +13,7 @@ def Dashboard(request):
     return render(request, 'Dashboard.html')
 def Events(request):
     categories=CategoryDb.objects.all()
-    return render(request, 'All_Events.html',{'categories':categories})
+    return render(request, 'Events.html',{'categories':categories})
 def View_Event(request):
     data=EventDb.objects.all()
     return render(request, 'View_Event.html',{'data':data})
@@ -130,3 +130,37 @@ def delete_contact(request, con_id):
     contact.delete()
     messages.success(request, 'contact Deleted successfully')
     return redirect(View_Category)
+def Bookings_details(request):
+    data = BookingDb.objects.all()
+    return render(request,'Booking_Details.html',{'data':data})
+
+
+def approve_booking(request,id):
+    data = BookingDb.objects.get(id=id)
+    data.status = "Approved"
+    data.save()
+    return redirect('Bookings_details')
+
+    return redirect('Booking_data.html')
+def reject_booking(request,id):
+    data = BookingDb.objects.get(id=id)
+    data.status = "Rejected"
+    data.save()
+    return redirect('Bookings_details')
+
+    return redirect('Booking_data.html')
+def delete_booking(request, book_id):
+    data = BookingDb.objects.filter(id=book_id)
+    data.delete()
+    messages.success(request, 'Booking Deleted successfully')
+    return redirect(Bookings_details)
+def view_review(request):
+    review=ReviewDb.objects.all()
+    return render(request, 'view_review.html',{'review':review})
+def delete_review(request, re_id):
+    review = ReviewDb.objects.filter(id=re_id)
+    review.delete()
+    messages.success(request, ' Deleted successfully')
+    return redirect(view_review)
+
+

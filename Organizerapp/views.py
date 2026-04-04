@@ -1,29 +1,95 @@
 from django.shortcuts import render,redirect
 from Adminapp.models import *
-from Organizerapp.models import ContactDb,Registration,BookingDb
+from Organizerapp.models import ContactDb,Registration,BookingDb,ReviewDb,Newsletter
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
+import json
+from django.http import JsonResponse
+import razorpay
+from django.views.decorators.csrf import csrf_exempt
 from datetime import date
 
 
 # Create your views here.
 def Home(request):
+    reviews = ReviewDb.objects.all()
     categories = CategoryDb.objects.all()
-    return render(request, 'Home.html', {'categories': categories})
-def About(request):
-    return render(request, 'About.html')
-def Contact(request):
-    return render(request, 'Contact.html')
-def All_Events(request):
-    events = EventDb.objects.all()
-    return render(request, 'All_Events.html', {'events': events})
-def Booking_details(request,):
-    return render(request, 'Booking_Details.html')
-def event_single(request, event_id):
+    if request.method == "POST":
+        email = request.POST.get('email')
 
+        if not Newsletter.objects.filter(email=email).exists():
+            Newsletter.objects.create(email=email)
+
+    return render(request, 'Home.html', {'categories': categories, 'reviews': reviews})
+def About(request):
+    categories = CategoryDb.objects.all()
+    if request.method == "POST":
+        email = request.POST.get('email')
+
+        if not Newsletter.objects.filter(email=email).exists():
+            Newsletter.objects.create(email=email)
+    return render(request, 'About.html',{'categories':categories})
+def Contact(request):
+    categories = CategoryDb.objects.all()
+    if request.method == "POST":
+        email = request.POST.get('email')
+
+        if not Newsletter.objects.filter(email=email).exists():
+            Newsletter.objects.create(email=email)
+    return render(request, 'Contact.html',{'categories':categories})
+def All_Events(request):
+    categories = CategoryDb.objects.all()
+    if request.method == "POST":
+        email = request.POST.get('email')
+
+        if not Newsletter.objects.filter(email=email).exists():
+            Newsletter.objects.create(email=email)
+    events = EventDb.objects.all()
+    return render(request, 'All_Events.html', {'events': events, 'categories':categories})
+def Booking_data(request,):
+    categories = CategoryDb.objects.all()
+    if request.method == "POST":
+        email = request.POST.get('email')
+
+        if not Newsletter.objects.filter(email=email).exists():
+            Newsletter.objects.create(email=email)
+    bookings = BookingDb.objects.filter(Name=request.session['Username'])
+
+    payment = None
+
+    if bookings.exists():
+        users = bookings.last()
+        amount = users.Price * 100  # Razorpay needs paisa
+
+        client = razorpay.Client(auth=("rzp_test_0ib0jPwwZ7I1lT", "VjHNO5zKeKxz8PYe7VnzwxMR"))
+
+        payment = client.order.create({
+            'amount': amount,
+            'currency': 'INR',
+            'payment_capture': 1
+        })
+
+    return render(request, 'Booking_data.html',{'bookings': bookings,
+                                                'categories':categories, 'payment':payment,'amount': amount if bookings.exists() else 0})
+def event_single(request, event_id):
+    categories = CategoryDb.objects.all()
+    if request.method == "POST":
+        email = request.POST.get('email')
+
+        if not Newsletter.objects.filter(email=email).exists():
+            Newsletter.objects.create(email=email)
     single_event = EventDb.objects.get(id=event_id)
-    return render(request, 'event_single.html', {'single_event':single_event})
+    booked_dates = BookingDb.objects.values_list('Date', flat=True)
+    booked_dates = [d.strftime("%Y-%m-%d") for d in booked_dates]
+    context = {
+        'booked_dates':json.dumps(booked_dates),
+        'single_event':single_event,
+        'categories': categories,
+    }
+
+    return render(request, 'event_single.html',context)
+
 def save_contact(request):
     if request.method == "POST":
         Name = request.POST.get("Name")
@@ -34,8 +100,14 @@ def save_contact(request):
         obj.save()
         return render(request, 'Contact.html')
 def filter_events(request,eve_name):
+    categories = CategoryDb.objects.all()
+    if request.method == "POST":
+        email = request.POST.get('email')
+
+        if not Newsletter.objects.filter(email=email).exists():
+            Newsletter.objects.create(email=email)
     filter_events = EventDb.objects.filter(Category_Name=eve_name)
-    return render(request, 'filter_events.html', {'filter_events': filter_events})
+    return render(request, 'filter_events.html', {'filter_events':filter_events,categories:categories})
 
 
 def sign_up(request):
@@ -57,6 +129,7 @@ def save_registration(request):
             return redirect('sign_up')
         else:
             obj.save()
+            messages.success(request, 'Registration successful')
             return redirect('sign_in')
 def user_logout(request):
     del request.session['Username']
@@ -69,6 +142,7 @@ def user_login(request):
         if Registration.objects.filter(Username=uname,password=password).exists():
             request.session['Username'] = uname
             request.session['password'] = password
+            messages.success(request, 'Login successful')
             return redirect('Home')
         else:
             return redirect('sign_in')
@@ -89,12 +163,58 @@ def save_booking(request):
 
         if BookingDb.objects.filter(Date=Date).exists():
            messages.warning(request,"This date is already booked!")
-           return render(request, 'Home.html')
+           return redirect ('Home')
 
         else:
-          BookingDb.objects.create(Name=Name,Email=Email,Date=Date,Category_Name=Category_Name,EventName=EventName,Location=Location,
+          booking=BookingDb.objects.create(Name=Name,Email=Email,Date=Date,Category_Name=Category_Name,EventName=EventName,Location=Location,
                                      Phone=Phone,Price=Price,Address=Address,Message=Message)
 
-          send_mail('Event booking Conformation','hello{Name},your {EventName} Booking on {Date} is received',settings.EMAIL_HOST_USER,[Email],fail_silently=False,)
-          messages.success(request, 'booked successfully')
+        message = f"""
+        Hello {booking.Name},
+
+        Your event booking has been confirmed.
+
+        Event: {booking.EventName}
+        Date: {booking.Date}
+        payment: {booking.Price}
+        Category: {booking.Category_Name}
+
+        Thank you for choosing EventHive.
+
+        Regards,
+        EventHive Team
+        """
+
+        send_mail(
+            'Event Booking Confirmation',
+            message,
+            settings.EMAIL_HOST_USER,
+            [booking.Email],
+            fail_silently=False
+        )
         return render(request, 'Home.html', {'messages':messages})
+def Review(request):
+    categories = CategoryDb.objects.all()
+    if request.method == "POST":
+        email = request.POST.get('email')
+
+        if not Newsletter.objects.filter(email=email).exists():
+            Newsletter.objects.create(email=email)
+    reviews=ReviewDb.objects.all()
+    return render(request, 'Review.html',{'reviews':reviews,'categories':categories})
+def save_review(request):
+    if request.method == "POST":
+        Name = request.POST.get("Name")
+        event = request.POST.get('event')
+        rating = request.POST.get('rating')
+        comment = request.POST.get('comment')
+        obj=ReviewDb(Name=Name,event_type=event,rating=rating,comment=comment)
+        obj.save()
+        return redirect(Review)
+def remove_booking(request, book_id):
+    bookings = BookingDb.objects.filter(id=book_id)
+    bookings.delete()
+    messages.success(request, 'Booking Removed successfully')
+    return redirect(Booking_data)
+
+

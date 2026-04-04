@@ -23,7 +23,7 @@ from EventHive import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('Event/',include('Organizerapp.urls')),
+    path('',include('Organizerapp.urls')),
     path('Adminapp/',include('Adminapp.urls')),
 
 
