@@ -13,6 +13,7 @@ def Dashboard(request):
     categories=CategoryDb.objects.count()
     events=EventDb.objects.count()
     return render(request, 'Dashboard.html',{'categories':categories,'events':events})
+
 def Events(request):
     categories=CategoryDb.objects.all()
     return render(request, 'Events.html',{'categories':categories})
