@@ -8,94 +8,92 @@
 </head>
 <body>
 <div class="content-body" style="min-height: 788px;padding-left:10px ,color:black">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Bookings Data</h4>
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Bookings Data</h4>
 
-                    <div class="table-responsive">
-                      <table class="table table-striped">
-                        <thead>
-                          <tr class="text-dark">
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Category_Name </th>
-                            <th>EventName</th>
-                            <th>Date</th>
-                            <th>Location</th>
-                            <th>Phone</th>
-                            <th>Price</th>
-                            <th>Address</th>
-                            <th>Message</th>
-                            <th>status</th>
-                            <th>Action</th>
-                              <th> Options </th>
-                          </tr>
-                        </thead>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr class="text-dark">
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Category_Name</th>
+                        <th>EventName</th>
+                        <th>Date</th>
+                        <th>Location</th>
+                        <th>Phone</th>
+                        <th>Price</th>
+                        <th>Address</th>
+                        <th>Message</th>
+                        <th>status</th>
+                        <th>Action</th>
+                        <th> Options</th>
+                    </tr>
+                    </thead>
 
-                        <tbody>
-                        {% for i in data %}
-                            <tr class="text-dark">
-                                <td>{{i.Name}}</td>
-                                <td>{{i.Email}}</td>
-                                <td>{{i.Category_Name|default:"No Category"}}</td>
-                                <td>{{i.EventName}}</td>
-                                <td>{{i.Date}}</td>
-                                <td>{{i.Location}}</td>
-                                <td>{{i.Phone}}</td>
-                                <td>{{i.Price}}</td>
-                                <td>{{i.Address}}</td>
-                                <td>{{i.Message|default:"No Message"}}</td>
-                                <td>{{i.status}}</td>
-
-
-                                <td>
-
-                                    <a href="{% url 'approve_booking' i.id %}" class="btn btn-success">Approve</a>
-                                    <a href="{% url 'reject_booking' i.id %}" class="btn btn-danger">Reject</a>
+                    <tbody>
+                    {% for i in data %}
+                    <tr class="text-dark">
+                        <td>{{i.Name}}</td>
+                        <td>{{i.Email}}</td>
+                        <td>{{i.Category_Name|default:"No Category"}}</td>
+                        <td>{{i.EventName}}</td>
+                        <td>{{i.Date}}</td>
+                        <td>{{i.Location}}</td>
+                        <td>{{i.Phone}}</td>
+                        <td>{{i.Price}}</td>
+                        <td>{{i.Address}}</td>
+                        <td>{{i.Message|default:"No Message"}}</td>
+                        <td>{{i.status}}</td>
 
 
-                                </td>
-                                <td>
-                                    <a href="{% url 'delete_booking'  book_id=i.id %}" class="btn btn-outline-info btn-sm">Delete</a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
+                        <td>
 
-                      </table>
+                            <a href="{% url 'approve_booking' i.id %}" class="btn btn-success">Approve</a>
+                            <a href="{% url 'reject_booking' i.id %}" class="btn btn-danger">Reject</a>
+                        </td>
+                        <td>
 
-                    </div>
-                  </div>
-                </div>
+                            <a href="{% url 'delete_booking'  book_id=i.id %}" class="btn btn-outline-info btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+
+                </table>
+
+            </div>
+        </div>
+    </div>
 </div>
 
 
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 
- <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+{% if messages %}
+{% for msg in messages %}
+{% if msg.tags == "success" %}
+<script>
+    swal('{{msg}}','','success')
+</script>
+{% elif msg.tags == "warning" %}
+<script>
+    swal('{{msg}}','','warning')
+</script>
+{% elif msg.tags == "info" %}
+<script>
+    swal('{{msg}}','','info')
+</script>
+{% elif msg.tags == "error" %}
+<script>
+    swal('{{msg}}','','error')
+</script>
+{% endif %}
+{% endfor %}
+{% endif %}
 
-
-    {% if messages %}
-        {% for msg in messages %}
-            {% if msg.tags == "success" %}
-                <script>
-                    swal('{{msg}}','','success')
-                </script>
-            {% elif msg.tags == "warning" %}
-                <script>
-                    swal('{{msg}}','','warning')
-                </script>
-            {% elif msg.tags == "info" %}
-                <script>
-                    swal('{{msg}}','','info')
-                </script>
-            {% elif msg.tags == "error" %}
-                <script>
-                    swal('{{msg}}','','error')
-                </script>
-            {% endif %}
-        {% endfor %}
-    {% endif %}
 </body>
 </html>
 {% endblock %}

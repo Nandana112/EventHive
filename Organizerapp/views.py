@@ -5,10 +5,8 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
 import json
-from django.http import JsonResponse
 import razorpay
-from django.views.decorators.csrf import csrf_exempt
-from datetime import date
+
 
 
 # Create your views here.
@@ -62,7 +60,7 @@ def Booking_data(request,):
         users = bookings.last()
         amount = users.Price * 100  # Razorpay needs paisa
 
-        client = razorpay.Client(auth=("rzp_test_0ib0jPwwZ7I1lT", "VjHNO5zKeKxz8PYe7VnzwxMR"))
+        client = razorpay.Client(auth=("rzp_test_ScV3BRoik1X3yH", "6a4svDrh3uU66w4VxGxAwtGA"))
 
         payment = client.order.create({
             'amount': amount,
@@ -107,7 +105,7 @@ def filter_events(request,eve_name):
         if not Newsletter.objects.filter(email=email).exists():
             Newsletter.objects.create(email=email)
     filter_events = EventDb.objects.filter(Category_Name=eve_name)
-    return render(request, 'filter_events.html', {'filter_events':filter_events,categories:categories})
+    return render(request, 'filter_events.html', {'filter_events':filter_events,'categories':categories})
 
 
 def sign_up(request):
@@ -142,7 +140,6 @@ def user_login(request):
         if Registration.objects.filter(Username=uname,password=password).exists():
             request.session['Username'] = uname
             request.session['password'] = password
-            messages.success(request, 'Login successful')
             return redirect('Home')
         else:
             return redirect('sign_in')
@@ -216,5 +213,4 @@ def remove_booking(request, book_id):
     bookings.delete()
     messages.success(request, 'Booking Removed successfully')
     return redirect(Booking_data)
-
 

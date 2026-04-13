@@ -299,60 +299,68 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <script>
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js">
+</script>
 
 <script>
-function payNow(booking_id){
+    function payNow(booking_id){
 
-    let btn = document.getElementById("payBtn" + booking_id);
+        let btn = document.getElementById("payBtn" + booking_id);
 
-    // ✅ BLOCK if already paid
-    if(localStorage.getItem("paid_" + booking_id) === "true"){
-        alert("Already Paid ✅");
-        return;
+        // ✅ BLOCK if already paid
+        if(localStorage.getItem("paid_" + booking_id) === "true"){
+            alert("Already Paid ✅");
+            return;
+        }
+
+        var options = {
+            "key": "rzp_test_ScV3BRoik1X3yH",
+            "amount": "{{amount}}",
+            "currency": "INR",
+            "name": "EventHive",
+            "order_id": "{{payment.id}}",
+            "handler": function (response){
+
+                alert("Payment Successful ✅");
+
+                // ✅ Save payment
+                localStorage.setItem("paid_" + booking_id, "true");
+
+                // ✅ Disable button
+                btn.disabled = true;
+                btn.innerText = "Paid ✅";
+
+                fetch("/update-payment/",{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/x-www-form-urlencoded",
+                        "X-CSRFToken":"{{csrf_token}}"
+                    },
+                body:"booking_id=" + booking_id
+                });
+            }
+        };
+        var rzp = new Razorpay(options);
+        rzp.open();
     }
 
-    var options = {
-        "key": "rzp_test_0ib0jPwwZ7I1lT",
-        "amount": "{{amount}}",
-        "currency": "INR",
-        "name": "EventHive",
-        "order_id": "{{payment.id}}",
 
-        "handler": function (response){
+    // ✅ AUTO DISABLE AFTER REFRESH
+    window.onload = function(){
 
-            alert("Payment Successful ✅");
+        let buttons = document.querySelectorAll("[id^='payBtn']");
 
-            // ✅ Save payment
-            localStorage.setItem("paid_" + booking_id, "true");
+        buttons.forEach(function(btn){
 
-            // ✅ Disable button
-            btn.disabled = true;
-            btn.innerText = "Paid ✅";
-        }
-    };
+            let booking_id = btn.id.replace("payBtn", "");
 
-    var rzp = new Razorpay(options);
-    rzp.open();
-}
+            if(localStorage.getItem("paid_" + booking_id) === "true"){
+                btn.disabled = true;
+                btn.innerText = "Paid ✅";
+            }
 
-
-// ✅ AUTO DISABLE AFTER REFRESH
-window.onload = function(){
-
-    let buttons = document.querySelectorAll("[id^='payBtn']");
-
-    buttons.forEach(function(btn){
-
-        let booking_id = btn.id.replace("payBtn", "");
-
-        if(localStorage.getItem("paid_" + booking_id) === "true"){
-            btn.disabled = true;
-            btn.innerText = "Paid ✅";
-        }
-
-    });
-}
+        });
+    }
 </script>
 </script>
 </body>

@@ -10,7 +10,9 @@ import json
 
 # Create your views here.
 def Dashboard(request):
-    return render(request, 'Dashboard.html')
+    categories=CategoryDb.objects.count()
+    events=EventDb.objects.count()
+    return render(request, 'Dashboard.html',{'categories':categories,'events':events})
 def Events(request):
     categories=CategoryDb.objects.all()
     return render(request, 'Events.html',{'categories':categories})
